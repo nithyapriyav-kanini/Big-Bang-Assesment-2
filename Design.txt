@@ -1,0 +1,25 @@
+
+User
+	Username
+	password - PasswordHash
+		 - PassKey
+	Role
+	status
+
+Doctor
+	Name
+	DateOfBirth
+	Age
+	Gender
+	Phone
+	Email
+	Specialization
+	Experience
+
+Patient
+	name
+	DateOfBirth
+	Age
+	Gender
+	Phone
+	Email
