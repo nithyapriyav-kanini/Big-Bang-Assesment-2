@@ -102,13 +102,13 @@ namespace BigBangAss2.Controllers
         }
 
         [HttpPost("Doctors")]
-        [ProducesResponseType(typeof(ICollection<UserDTO?>), StatusCodes.Status201Created)]//Success Response
+        [ProducesResponseType(typeof(ICollection<Doctor?>), StatusCodes.Status201Created)]//Success Response
         [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
-        public async Task<ActionResult<ICollection<UserDTO?>>> GetAllDoctors()
+        public async Task<ActionResult<ICollection<Doctor?>>> GetAllDoctors(StatusDTO dto)
         {
             try
             {
-                var doctors = await _service.GetDoctors();
+                var doctors = await _service.GetDoctors(dto.state);
                 if (doctors != null)
                     return Created("Successful", doctors);
             }
@@ -122,7 +122,7 @@ namespace BigBangAss2.Controllers
         }
 
         [HttpPost("Approve")]
-        [ProducesResponseType(typeof(UserDTO), StatusCodes.Status201Created)]//Success Response
+        [ProducesResponseType(typeof(Doctor), StatusCodes.Status201Created)]//Success Response
         [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
         public async Task<ActionResult<UserDTO?>> ApproveDoctor(UserDTO dto)
         {

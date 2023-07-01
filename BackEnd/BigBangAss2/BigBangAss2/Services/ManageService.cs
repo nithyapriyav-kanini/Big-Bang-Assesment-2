@@ -21,19 +21,21 @@ namespace BigBangAss2.Services
             _PRepo = PRepo;
         }
 
-        public async Task<UserDTO> ApproveDoctor(UserDTO dto)
+        public async Task<Doctor> ApproveDoctor(UserDTO dto)
         {
             var user = await _URepo.Get(dto.UserId);
             user.status = dto.status;
             var result = await _URepo.Update(user);
             if (result != null)
             {
-                dto.UserId= result.UserId;
-                dto.Email= result.Email;
-                dto.Password = null;
-                dto.status = result.status;
-                dto.Role = result.Role;
-                return dto;
+                Doctor doctor = new Doctor();
+                doctor.Users = new User();
+                doctor.Users.UserId= result.UserId;
+                doctor.Users.Email= result.Email;
+                doctor.Users.status = result.status;
+                doctor.Users.Role = result.Role;
+                doctor = await _DRepo.Get(result.UserId);
+                return doctor;
             }
             return null;
         }
@@ -54,13 +56,21 @@ namespace BigBangAss2.Services
             return true;
         }
 
-        public async Task<ICollection<Doctor>> GetDoctors()
+        public async Task<ICollection<Doctor>> GetDoctors(string state)
         {
             var doctors = await _DRepo.GetAll();
+            if (state == "All")
+            {
+                if (doctors.Count > 0)
+                {
+                    return doctors;
+                }
+                return null;
+            }
             List<Doctor> result= new List<Doctor>();
             foreach(var doctor in doctors)
             {
-                if (await CheckApprove(doctor.DoctorId))
+                if (await CheckApprove(doctor.DoctorId,state))
                 {
                     result.Add(doctor);
                 }
@@ -71,10 +81,10 @@ namespace BigBangAss2.Services
             }
             return null;
         }
-        private async Task<Boolean> CheckApprove(int id)
+        private async Task<Boolean> CheckApprove(int id,string state)
         {
             var user=await _URepo.Get(id);
-            if (user.status == "Approved")
+            if (user.status == state)
             {
                 return true;
             }
