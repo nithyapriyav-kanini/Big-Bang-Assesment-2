@@ -3,6 +3,7 @@ using BigBangAss2.Exceptions;
 using BigBangAss2.Interfaces;
 using BigBangAss2.Models;
 using BigBangAss2.Models.DTO;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace BigBangAss2.Controllers
 {
     [Route("api/[controller]/action")]
     [ApiController]
+    [EnableCors("ReactCors")]
     public class UserController : ControllerBase
     {
         private readonly IManageService _service;

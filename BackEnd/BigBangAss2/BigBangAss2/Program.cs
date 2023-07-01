@@ -35,6 +35,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         ValidateAudience = false
                     };
                 });
+builder.Services.AddCors(opts =>
+{
+    opts.AddPolicy("ReactCors", options =>
+    {
+        options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+    });
+});
 
 var app = builder.Build();
 
@@ -44,6 +51,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("ReactCors");
 app.UseAuthentication();
 app.UseAuthorization();
 
