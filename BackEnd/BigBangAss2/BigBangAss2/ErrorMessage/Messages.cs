@@ -9,7 +9,8 @@
                 "Cannot Register at this time",
                 "Working with database, try again later",
                 "Mail Id Not Available",
-                "Check your credentials"
+                "Check your credentials",
+                "Doctors List is Empty"
             };
         }
     }

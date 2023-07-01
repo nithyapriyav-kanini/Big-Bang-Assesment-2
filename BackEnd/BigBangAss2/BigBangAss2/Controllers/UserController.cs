@@ -115,7 +115,7 @@ namespace BigBangAss2.Controllers
             catch (Exception)
             {
                 error.ID = 400;
-                error.Message = new Messages().messages[2];
+                error.Message = new Messages().messages[4];
                 _logger.LogError(error.Message);
             }
             return BadRequest(error);
