@@ -9,7 +9,7 @@ namespace BigBangAss2.Models
 
         [StringLength(50, ErrorMessage = "Email must be between 1 and 50 characters")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
-        public string? Email { get; set; }
+        public string Email { get; set; }
         public byte[]? PasswordHash { get; set; }
         public byte[]? HashKey { get; set; }
         public string? Role { get; set; }

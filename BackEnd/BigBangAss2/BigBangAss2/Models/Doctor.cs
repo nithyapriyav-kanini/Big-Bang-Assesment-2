@@ -17,20 +17,7 @@ namespace BigBangAss2.Models
 
         [StringLength(10, ErrorMessage = "Gender must be between 1 and 10 characters", MinimumLength = 1)]
         public string? Gender { get; set; }
-        public int Age
-        {
-            get
-            {
-                var year= DateTime.Now.Year-DOB.Year;
-                if (DateTime.Now.Month > DOB.Month)
-                    year--;
-                return year;
-            }
-            set
-            {
-                Age= value;
-            }
-        }
+        public int Age { get; set; }
 
         [StringLength(15, ErrorMessage = "Phone number must be between 1 and 15 characters")]
         public string? PhoneNo { get; set; }

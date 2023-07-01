@@ -1,33 +1,80 @@
 ﻿using BigBangAss2.Interfaces;
 using BigBangAss2.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BigBangAss2.Services
 {
     public class UserRepo : IRepo<User, int>
     {
-        public Task<User?> Add(User item)
+        private HospitalContext _context;
+
+        public UserRepo(HospitalContext context)
         {
-            throw new NotImplementedException();
+            _context=context;
+        }
+        public async Task<User?> Add(User item)
+        {
+            try
+            {
+                _context.Users.Add(item);
+                await _context.SaveChangesAsync();
+                return item;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception();
+            }
         }
 
-        public Task<User?> Delete(int id)
+        public async Task<User?> Delete(int id)
         {
-            throw new NotImplementedException();
+            var user = await Get(id);
+            if (user != null)
+            {
+                try
+                {
+                    _context.Users.Remove(user);
+                    await _context.SaveChangesAsync();
+                    return user;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception();
+                }
+            }
+            return null;
         }
 
-        public Task<User?> Get(int id)
+        public async Task<User?> Get(int id)
         {
-            throw new NotImplementedException();
+            var result=await  _context.Users.FirstOrDefaultAsync(u=>u.UserId == id);
+            if (result != null)
+            {
+                return result;
+            }
+            return null;
         }
 
-        public Task<ICollection<User>?> GetAll()
+        public async Task<ICollection<User>?> GetAll()
         {
-            throw new NotImplementedException();
+            var users = await _context.Users.ToListAsync();
+            if (users.Count > 0)
+            {
+                return users;
+            }
+            return null;
         }
 
-        public Task<User?> Update(User item)
+        public async Task<User?> Update(User item)
         {
-            throw new NotImplementedException();
+            var user = await Get(item.UserId);
+            if(user != null)
+            {
+                user.status = item.status;
+                await _context.SaveChangesAsync();
+                return user;
+            }
+            return null;
         }
     }
 }

@@ -1,5 +1,10 @@
+using BigBangAss2.Interfaces;
 using BigBangAss2.Models;
+using BigBangAss2.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +18,23 @@ builder.Services.AddDbContext<HospitalContext>(opts =>
 {
     opts.UseSqlServer(builder.Configuration.GetConnectionString("Conn"));
 });
+builder.Services.AddScoped<IRepo<User, int>, UserRepo>();
+builder.Services.AddScoped<IRepo<Doctor, int>, DoctorRepo>();
+builder.Services.AddScoped<IRepo<Patient, int>, PatientRepo>();
+builder.Services.AddScoped<IManageService,ManageService>();
+builder.Services.AddScoped<IGenerateToken,GenerateTokenService>();
+builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenKey"])),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
 
 var app = builder.Build();
 
@@ -22,7 +44,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
