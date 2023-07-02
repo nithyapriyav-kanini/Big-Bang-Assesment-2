@@ -21,10 +21,10 @@ namespace BigBangAss2.Services
             _PRepo = PRepo;
         }
 
-        public async Task<Doctor> ApproveDoctor(UserDTO dto)
+        public async Task<Doctor> ApproveDoctor(UserIdDTO dto)
         {
             var user = await _URepo.Get(dto.UserId);
-            user.status = dto.status;
+            user.status = "Approved";
             var result = await _URepo.Update(user);
             if (result != null)
             {
