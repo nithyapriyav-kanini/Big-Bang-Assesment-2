@@ -126,7 +126,7 @@ namespace BigBangAss2.Controllers
         [HttpPost("Approve")]
         [ProducesResponseType(typeof(Doctor), StatusCodes.Status201Created)]//Success Response
         [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
-        public async Task<ActionResult<UserDTO?>> ApproveDoctor(UserDTO dto)
+        public async Task<ActionResult<Doctor?>> ApproveDoctor(UserDTO dto)
         {
             try
             {
