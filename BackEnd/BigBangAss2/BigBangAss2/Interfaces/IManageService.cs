@@ -10,5 +10,6 @@ namespace BigBangAss2.Interfaces
         public Task<Doctor> ApproveDoctor(UserIdDTO dto);
         public Task<ICollection<Doctor>> GetDoctors(string state);
         public Task<Boolean> CheckForRepeat(string mail);
+        public Task<Doctor> DenyDoctor(UserIdDTO dto);
     }
 }

@@ -39,6 +39,24 @@ namespace BigBangAss2.Services
             }
             return null;
         }
+        public async Task<Doctor> DenyDoctor(UserIdDTO dto)
+        {
+            var user = await _URepo.Get(dto.UserId);
+            user.status = "Denied";
+            var result = await _URepo.Update(user);
+            if (result != null)
+            {
+                Doctor doctor = new Doctor();
+                doctor.Users = new User();
+                doctor.Users.UserId = result.UserId;
+                doctor.Users.Email = result.Email;
+                doctor.Users.status = result.status;
+                doctor.Users.Role = result.Role;
+                doctor = await _DRepo.Get(result.UserId);
+                return doctor;
+            }
+            return null;
+        }
 
         public async Task<bool> CheckForRepeat(string mail)
         {
