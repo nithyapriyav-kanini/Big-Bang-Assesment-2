@@ -142,5 +142,25 @@ namespace BigBangAss2.Controllers
             }
             return BadRequest(error);
         }
+
+        [HttpPost("Deny Doctor")]
+        [ProducesResponseType(typeof(Doctor), StatusCodes.Status201Created)]//Success Response
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
+        public async Task<ActionResult<Doctor?>> DenyDoctor(UserIdDTO dto)
+        {
+            try
+            {
+                var doctor = await _service.DenyDoctor(dto);
+                if (doctor != null)
+                    return Created("Successful", doctor);
+            }
+            catch (Exception)
+            {
+                error.ID = 400;
+                error.Message = new Messages().messages[2];
+                _logger.LogError(error.Message);
+            }
+            return BadRequest(error);
+        }
     }
 }
