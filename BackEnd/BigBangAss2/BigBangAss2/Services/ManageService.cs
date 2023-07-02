@@ -77,14 +77,6 @@ namespace BigBangAss2.Services
         public async Task<ICollection<Doctor>> GetDoctors(string state)
         {
             var doctors = await _DRepo.GetAll();
-            if (state == "All")
-            {
-                if (doctors.Count > 0)
-                {
-                    return doctors;
-                }
-                return null;
-            }
             List<Doctor> result= new List<Doctor>();
             foreach(var doctor in doctors)
             {
@@ -198,5 +190,14 @@ namespace BigBangAss2.Services
             return patient;
         }
 
+        public async Task<ICollection<Doctor>> GetAllDoctors()
+        {
+            var doctors = await _DRepo.GetAll();
+            foreach(var doctor in doctors)
+            {
+                doctor.Users = await _URepo.Get(doctor.DoctorId);
+            }
+            return doctors;
+        }
     }
 }

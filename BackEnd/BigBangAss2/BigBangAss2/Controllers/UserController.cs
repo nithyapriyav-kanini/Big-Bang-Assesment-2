@@ -106,11 +106,30 @@ namespace BigBangAss2.Controllers
         [HttpPost("Doctors")]
         [ProducesResponseType(typeof(ICollection<Doctor?>), StatusCodes.Status201Created)]//Success Response
         [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
-        public async Task<ActionResult<ICollection<Doctor?>>> GetAllDoctors(StatusDTO dto)
+        public async Task<ActionResult<ICollection<Doctor?>>> GetDoctors(StatusDTO dto)
         {
             try
             {
                 var doctors = await _service.GetDoctors(dto.state);
+                if (doctors != null)
+                    return Created("Successful", doctors);
+            }
+            catch (Exception)
+            {
+                error.ID = 400;
+                error.Message = new Messages().messages[4];
+                _logger.LogError(error.Message);
+            }
+            return BadRequest(error);
+        }
+        [HttpPost("AllDoctors")]
+        [ProducesResponseType(typeof(ICollection<Doctor?>), StatusCodes.Status201Created)]//Success Response
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
+        public async Task<ActionResult<ICollection<Doctor?>>> GetAllDoctors()
+        {
+            try
+            {
+                var doctors = await _service.GetAllDoctors();
                 if (doctors != null)
                     return Created("Successful", doctors);
             }
