@@ -22,9 +22,9 @@ namespace BigBangAss2.Controllers
         public UserController(IManageService service,ILogger<UserController> logger,IUserService UService)
         {
             _service = service;
-            error = new Error();  
             _logger = logger;
             _UService = UService;
+            error = new Error();
         }
         [HttpPost("Doctor Register")]
         [ProducesResponseType(typeof(Doctor), StatusCodes.Status201Created)]//Success Response
