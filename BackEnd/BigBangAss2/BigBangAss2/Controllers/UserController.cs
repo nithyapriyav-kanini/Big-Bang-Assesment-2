@@ -131,7 +131,7 @@ namespace BigBangAss2.Controllers
             {
                 var doctors = await _service.GetAllDoctors();
                 if (doctors != null)
-                    return Created("Successful", doctors);
+                    return Created("Fetched", doctors);
             }
             catch (Exception)
             {
