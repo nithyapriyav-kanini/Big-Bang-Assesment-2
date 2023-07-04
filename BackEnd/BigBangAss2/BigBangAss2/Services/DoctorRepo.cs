@@ -20,7 +20,7 @@ namespace BigBangAss2.Services
                 await _context.SaveChangesAsync();
                 return item;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 throw new Exception();
             }
@@ -37,7 +37,7 @@ namespace BigBangAss2.Services
                     await _context.SaveChangesAsync();
                     return doctor;
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     throw new Exception();
                 }

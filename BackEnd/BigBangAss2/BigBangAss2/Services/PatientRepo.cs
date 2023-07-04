@@ -21,7 +21,7 @@ namespace BigBangAss2.Services
                 await _context.SaveChangesAsync();
                 return item;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception();
             }
@@ -38,9 +38,9 @@ namespace BigBangAss2.Services
                     await _context.SaveChangesAsync();
                     return patient;
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
-                    throw new Exception(ex.Message);
+                    throw new Exception();
                 }
             }
             return null;

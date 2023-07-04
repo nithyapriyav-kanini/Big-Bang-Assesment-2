@@ -2,7 +2,6 @@
 using BigBangAss2.Interfaces;
 using BigBangAss2.Models;
 using BigBangAss2.Models.DTO;
-using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -21,39 +20,53 @@ namespace BigBangAss2.Services
             _PRepo = PRepo;
         }
 
-        public async Task<Doctor> ApproveDoctor(UserIdDTO dto)
+        public async Task<Doctor?> ApproveDoctor(UserIdDTO dto)
         {
             var user = await _URepo.Get(dto.UserId);
-            user.status = "Approved";
-            var result = await _URepo.Update(user);
-            if (result != null)
+            if (user != null)
             {
-                Doctor doctor = new Doctor();
-                doctor.Users = new User();
-                doctor.Users.UserId= result.UserId;
-                doctor.Users.Email= result.Email;
-                doctor.Users.status = result.status;
-                doctor.Users.Role = result.Role;
-                doctor = await _DRepo.Get(result.UserId);
-                return doctor;
+                user.status = "Approved";
+                var result = await _URepo.Update(user);
+                if (result != null)
+                {
+                    Doctor doctor = new Doctor();
+                    doctor.Users = new User();
+                    doctor.Users.UserId = result.UserId;
+                    doctor.Users.Email = result.Email;
+                    doctor.Users.status = result.status;
+                    doctor.Users.Role = result.Role;
+                    var id= await _DRepo.Get(result.UserId);
+                    if(id != null)
+                    {
+                        doctor = id;
+                    }
+                    return doctor;
+                }
             }
             return null;
         }
-        public async Task<Doctor> DenyDoctor(UserIdDTO dto)
+        public async Task<Doctor?> DenyDoctor(UserIdDTO dto)
         {
             var user = await _URepo.Get(dto.UserId);
-            user.status = "Denied";
-            var result = await _URepo.Update(user);
-            if (result != null)
+            if (user != null)
             {
-                Doctor doctor = new Doctor();
-                doctor.Users = new User();
-                doctor.Users.UserId = result.UserId;
-                doctor.Users.Email = result.Email;
-                doctor.Users.status = result.status;
-                doctor.Users.Role = result.Role;
-                doctor = await _DRepo.Get(result.UserId);
-                return doctor;
+                user.status = "Denied";
+                var result = await _URepo.Update(user);
+                if (result != null)
+                {
+                    Doctor doctor = new Doctor();
+                    doctor.Users = new User();
+                    doctor.Users.UserId = result.UserId;
+                    doctor.Users.Email = result.Email;
+                    doctor.Users.status = result.status;
+                    doctor.Users.Role = result.Role;
+                    var obj= await _DRepo.Get(result.UserId);
+                    if(obj != null)
+                    {
+                        doctor = obj;
+                        return doctor;
+                    }
+                }
             }
             return null;
         }
@@ -74,7 +87,7 @@ namespace BigBangAss2.Services
             return true;
         }
 
-        public async Task<ICollection<Doctor>> GetDoctors(string state)
+        public async Task<ICollection<Doctor>?> GetDoctors(string state)
         {
             var doctors = await _DRepo.GetAll();
             List<Doctor> result= new List<Doctor>();
@@ -94,43 +107,49 @@ namespace BigBangAss2.Services
         private async Task<Boolean> CheckApprove(int id,string state)
         {
             var user=await _URepo.Get(id);
-            if (user.status == state)
+            if (user != null)
             {
-                return true;
+                if (user.status == state)
+                {
+                    return true;
+                }
             }
             return false;
         } 
 
         public async Task<Doctor> RegisterDoctor(DoctorRegDTO dto)
         {
-            var check = await CheckForRepeat(dto.Users.Email);
-            if(check)
+            if (dto != null)
             {
-                var hmac = new HMACSHA512();
-                dto.Users.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password));
-                dto.Users.HashKey = hmac.Key;
-                dto.Users.Role = "Doctor";
-                dto.Users.status = "Requested";
-                var result = await _URepo.Add(dto.Users);
-                if (result != null)
+                var check = await CheckForRepeat(dto.Users.Email);
+                if (check)
                 {
-                    dto.DoctorId = result.UserId;
-                    var doctor = await Mapper(dto);
-                    var res = await _DRepo.Add(doctor);
-                    if(res != null)
+                    var hmac = new HMACSHA512();
+                    dto.Users.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password));
+                    dto.Users.HashKey = hmac.Key;
+                    dto.Users.Role = "Doctor";
+                    dto.Users.status = "Requested";
+                    var result = await _URepo.Add(dto.Users);
+                    if (result != null)
                     {
-                        return res;
+                        dto.DoctorId = result.UserId;
+                        var doctor = await Mapper(dto);
+                        var res = await _DRepo.Add(doctor);
+                        if (res != null)
+                        {
+                            return res;
+                        }
                     }
                 }
-            }
-            else
-            {
-                throw new RepeatationException();
+                else
+                {
+                    throw new RepeatationException();
+                }
             }
             return null;
         }
 
-        public async Task<Patient> RegisterPatient(PatientRegDTO dto)
+        public async Task<Patient?> RegisterPatient(PatientRegDTO dto)
         {
             var check = await CheckForRepeat(dto.Users.Email);
             if (check)
@@ -198,6 +217,27 @@ namespace BigBangAss2.Services
                 doctor.Users = await _URepo.Get(doctor.DoctorId);
             }
             return doctors;
+        }
+
+        public async Task<Doctor> GetDoctor(UserIdDTO dto)
+        {
+            var doctor = await _DRepo.Get(dto.UserId);
+            if (doctor != null)
+            {
+                doctor.Users = await _URepo.Get(doctor.DoctorId);
+                return doctor;
+            }
+            return null;
+        }
+
+        public async Task<ICollection<Patient>?> GetAllPatients()
+        {
+            var patients=await _PRepo.GetAll();
+            if(patients != null)
+            {
+                return patients;
+            }
+            return null;
         }
     }
 }

@@ -46,6 +46,7 @@ namespace BigBangAss2.Services
                             return null;
                     }
                     userDTO = new UserDTO();
+                    userDTO.UserId = user.UserId;
                     userDTO.Email = user.Email;
                     userDTO.Role = user.Role;
                     userDTO.status = user.status;

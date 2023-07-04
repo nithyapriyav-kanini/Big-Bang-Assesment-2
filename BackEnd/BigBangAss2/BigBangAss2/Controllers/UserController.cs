@@ -3,8 +3,8 @@ using BigBangAss2.Exceptions;
 using BigBangAss2.Interfaces;
 using BigBangAss2.Models;
 using BigBangAss2.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BigBangAss2.Controllers
@@ -122,7 +122,9 @@ namespace BigBangAss2.Controllers
             }
             return BadRequest(error);
         }
+
         [HttpPost("AllDoctors")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ICollection<Doctor?>), StatusCodes.Status201Created)]//Success Response
         [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
         public async Task<ActionResult<ICollection<Doctor?>>> GetAllDoctors()
@@ -142,7 +144,29 @@ namespace BigBangAss2.Controllers
             return BadRequest(error);
         }
 
+        [HttpPost("AllPatients")]
+        [Authorize(Roles ="Admin")]
+        [ProducesResponseType(typeof(ICollection<Patient?>), StatusCodes.Status201Created)]//Success Response
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
+        public async Task<ActionResult<ICollection<Patient?>>> GetAllPatients()
+        {
+            try
+            {
+                var patients = await _service.GetAllPatients();
+                if (patients != null)
+                    return Created("Fetched", patients);
+            }
+            catch (Exception)
+            {
+                error.ID = 400;
+                error.Message = new Messages().messages[4];
+                _logger.LogError(error.Message);
+            }
+            return BadRequest(error);
+        }
+
         [HttpPost("Approve Doctor")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(Doctor), StatusCodes.Status201Created)]//Success Response
         [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
         public async Task<ActionResult<Doctor?>> ApproveDoctor(UserIdDTO dto)
@@ -163,6 +187,7 @@ namespace BigBangAss2.Controllers
         }
 
         [HttpPost("Deny Doctor")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(Doctor), StatusCodes.Status201Created)]//Success Response
         [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
         public async Task<ActionResult<Doctor?>> DenyDoctor(UserIdDTO dto)
@@ -170,6 +195,26 @@ namespace BigBangAss2.Controllers
             try
             {
                 var doctor = await _service.DenyDoctor(dto);
+                if (doctor != null)
+                    return Created("Successful", doctor);
+            }
+            catch (Exception)
+            {
+                error.ID = 400;
+                error.Message = new Messages().messages[2];
+                _logger.LogError(error.Message);
+            }
+            return BadRequest(error);
+        }
+        [HttpPost("Get Doctor")]
+        [Authorize(Roles = "Doctor")]
+        [ProducesResponseType(typeof(Doctor), StatusCodes.Status201Created)]//Success Response
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]//Failure Response
+        public async Task<ActionResult<Doctor?>> GetDoctor(UserIdDTO dto)
+        {
+            try
+            {
+                var doctor = await _service.GetDoctor(dto);
                 if (doctor != null)
                     return Created("Successful", doctor);
             }
